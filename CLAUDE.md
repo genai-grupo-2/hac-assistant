@@ -20,19 +20,34 @@ esta en `mission.md`; esto es el "como", no el "que".
 
 ## Estructura
 
+Los nombres nuestros van en ingles. Los marcados con (*) los fija la consigna
+y **no se renombran**: la catedra corre sus propios comandos contra ellos.
+
 ```
-recuperar.py          # CLI parte 1 (thin wrapper sobre recuperador/)
-agente.py             # CLI parte 2
-servidor_mcp.py       # parte 3, transporte stdio
-agente_mcp.py         # CLI parte 3
-atencion.py           # parte 4, solo NumPy
+recuperar.py          # (*) CLI parte 1, thin wrapper sobre retriever/
+agente.py             # (*) CLI parte 2
+servidor_mcp.py       # (*) parte 3, transporte stdio
+agente_mcp.py         # (*) CLI parte 3
+atencion.py           # (*) parte 4, solo NumPy
+datos/                # (*) material de la catedra: corpus y preguntas
+api/                  # (*) API del hospital, de la catedra
+evaluar/              # (*) evaluador de la catedra
+atencion/             # (*) test_atencion.py de la catedra
+experimentos/         # (*) un .eval.json por configuracion probada
+experimentos/inspector/  # (*) capturas del MCP Inspector
+a_mano/               # (*) parte 5, escaneos
+INFORME.md            # (*) entregable final
 config.yaml           # config ganadora de la parte 1
-recuperador/          # logica del RAG (chunking, encoders, indice)
-tests/                # tests propios (pytest); NO es el de la catedra
-experimentos/         # un .eval.json por configuracion probada
-a_mano/               # parte 5, escaneos
-INFORME.md            # entregable final
+retriever/            # logica del RAG (chunking, encoders, index)
+tools/                # cliente de la API del hospital, compartido por 2 y 3
+tests/                # tests propios (pytest); NO son los de la catedra
 ```
+
+Tampoco se renombran los identificadores que la catedra invoca por nombre: las
+funciones de `atencion.py` (`softmax`, `atencion`, `autoatencion`,
+`multicabeza`, `layer_norm`), los nombres de las seis herramientas
+(`buscar_documentos`, `consultar_camas`, ...) y los flags `--preguntas` /
+`--salida`.
 
 ## Forma de trabajo
 

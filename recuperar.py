@@ -15,8 +15,8 @@ import json
 import sys
 from pathlib import Path
 
-from recuperador.config import Config, cargar_config
-from recuperador.indice import Indice
+from retriever.config import Config, cargar_config
+from retriever.index import Indice
 
 # La consigna no fija el nombre del campo de la pregunta; se aceptan los
 # candidatos razonables para no romper si el JSONL usa otro.

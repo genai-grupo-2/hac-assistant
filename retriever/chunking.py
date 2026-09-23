@@ -18,8 +18,8 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
-from recuperador.config import ConfigChunking
-from recuperador.corpus import Documento
+from retriever.config import ConfigChunking
+from retriever.corpus import Documento
 
 _ENCABEZADO = re.compile(r"^(#{1,6})\s+(.*)$")
 

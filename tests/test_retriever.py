@@ -13,11 +13,11 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from recuperador.chunking import Fragmento, trocear
-from recuperador.config import Config, ConfigChunking, cargar_config
-from recuperador.corpus import cargar_corpus
-from recuperador.encoders import normalizar
-from recuperador.indice import Indice
+from retriever.chunking import Fragmento, trocear
+from retriever.config import Config, ConfigChunking, cargar_config
+from retriever.corpus import cargar_corpus
+from retriever.encoders import normalizar
+from retriever.index import Indice
 import recuperar
 
 
