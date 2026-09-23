@@ -38,9 +38,9 @@ Hay que clonar/copiar el material de la cátedra dentro del repo antes de seguir
 | # | Feature | Dónde | Estado |
 |---|---|---|---|
 | F1 | Scaffolding del proyecto | `CLAUDE.md`, `SPEC.md`, `ROADMAP.md`, `requirements.txt`, `pytest.ini` | ✅ |
-| F2 | Atención en NumPy (parte 4) | `atencion.py`, `tests/test_atencion_propio.py` | 🟡 24 tests propios en verde; falta correr el de la cátedra |
-| F3 | Chunking + configuración | `recuperador/corpus.py`, `recuperador/chunking.py`, `recuperador/config.py`, `config.yaml` | ✅ |
-| F4 | Encoders + índice + CLI | `recuperador/encoders.py`, `recuperador/indice.py`, `recuperar.py` | ✅ código; encoders nunca ejecutados (falta descargar modelos) |
+| F2 | Atención en NumPy (parte 4) | `atencion.py`, `tests/test_attention.py` | 🟡 24 tests propios en verde; falta correr el de la cátedra |
+| F3 | Chunking + configuración | `retriever/corpus.py`, `retriever/chunking.py`, `retriever/config.py`, `config.yaml` | ✅ |
+| F4 | Encoders + índice + CLI | `retriever/encoders.py`, `retriever/index.py`, `recuperar.py` | ✅ código; encoders nunca ejecutados (falta descargar modelos) |
 
 Detalle de lo entregado:
 
@@ -49,7 +49,7 @@ Detalle de lo entregado:
   a la izquierda. ⚠️ Las firmas están **asumidas** (ver `SPEC.md` § Parte 4):
   `atencion` y compañía devuelven `(salida, pesos)`. Hay que reconciliarlas
   cuando llegue `atencion/test_atencion.py`.
-- **`recuperador/`** — chunking por estructura Markdown o por ventana
+- **`retriever/`** — chunking por estructura Markdown o por ventana
   deslizante, prefijo opcional de metadatos, catálogo de 6 encoders
   (`bert_base` y `bert_multi` como línea de base con mean pooling; `minilm`,
   `e5_small`, `e5_base` con prefijos `query:`/`passage:`, `bge_m3`), índice
@@ -64,7 +64,7 @@ Detalle de lo entregado:
 | # | Feature | Entregable | Depende de |
 |---|---|---|---|
 | F5 | Barrido de experimentos de la parte 1 | `experimentos/*.eval.json`, tabla, `config.yaml` final | corpus + preguntas + `evaluar.py` |
-| F6 | Cliente de la API del hospital (5 tools) | `herramientas/api_hospital.py` + tests con la API levantada | `api/servidor.py` |
+| F6 | Cliente de la API del hospital (5 tools) | `tools/hospital_api.py` + tests con la API levantada | `api/servidor.py` |
 | F7 | Agente LangChain (parte 2) | `agente.py`, `respuestas.jsonl`, `.eval.json`, log `.md` con usage y costo | F5, F6, `OPENROUTER_API_KEY` |
 
 F5 es lo primero: el ruteo y la fidelidad del agente dependen de que el

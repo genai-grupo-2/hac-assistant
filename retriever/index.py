@@ -11,10 +11,10 @@ from pathlib import Path
 
 import numpy as np
 
-from recuperador.chunking import Fragmento, trocear
-from recuperador.config import Config
-from recuperador.corpus import cargar_corpus
-from recuperador.encoders import Encoder, crear_encoder
+from retriever.chunking import Fragmento, trocear
+from retriever.config import Config
+from retriever.corpus import cargar_corpus
+from retriever.encoders import Encoder, crear_encoder
 
 
 @dataclass(frozen=True)
