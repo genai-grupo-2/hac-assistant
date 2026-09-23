@@ -1,0 +1,23 @@
+# Configuracion del recuperador (parte 1).
+#
+# Esta es la config que corre la catedra sobre las preguntas de test, asi que
+# tiene que quedar fija en la ganadora del barrido de experimentos.
+#
+# ESTADO: valores de arranque, TODAVIA NO MEDIDOS contra el evaluador.
+# Se reemplazan por la fila ganadora de experimentos/ cuando este el corpus.
+
+nombre: arranque
+corpus: datos/corpus
+encoder: e5_small          # ver claves en recuperador/encoders.py:CATALOGO
+
+chunking:
+  estrategia: estructura   # estructura | ventana
+  max_palabras: 180        # tope duro de un fragmento
+  min_palabras: 20         # por debajo, se fusiona con el fragmento anterior
+  tamano: 150              # solo estrategia "ventana"
+  solapamiento: 40         # solo estrategia "ventana"
+  prefijo_metadatos: true  # antepone "documento > seccion" antes de embeber
+
+busqueda:
+  top_k: 4                 # tope de fragmentos por pregunta
+  umbral: 0.0              # coseno minimo; sube la precision, puede costar recall
