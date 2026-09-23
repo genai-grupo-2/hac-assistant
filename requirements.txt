@@ -1,0 +1,22 @@
+# Parte 1 - RAG vectorial
+numpy>=1.26
+torch>=2.2
+transformers>=4.44
+sentence-transformers>=3.0
+scikit-learn>=1.5
+PyYAML>=6.0
+
+# Partes 2 y 3 - agente y MCP
+langchain>=0.3
+langchain-openai>=0.2
+langchain-core>=0.3
+langchain-mcp-adapters>=0.1
+mcp>=1.2
+httpx>=0.27
+
+# API del hospital (la provee la catedra en api/)
+fastapi>=0.115
+uvicorn>=0.30
+
+# Desarrollo
+pytest>=8.0
