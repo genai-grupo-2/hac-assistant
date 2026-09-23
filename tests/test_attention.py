@@ -134,7 +134,7 @@ def test_autoatencion_coincide_con_atencion_explicita():
 
 def test_autoatencion_causal_es_triangular_inferior():
     X, W_q, W_k, W_v = _entradas_cat()
-    _, pesos = autoatencion(X, W_q, W_k, W_v, causal=True)
+    _, pesos = autoatencion(X, W_q, W_k, W_v, mascara=True)
     assert np.allclose(np.triu(pesos, k=1), 0.0)
     assert np.allclose(pesos.sum(axis=-1), 1.0)
     assert np.allclose(pesos[0], [1.0, 0.0, 0.0])
@@ -142,41 +142,53 @@ def test_autoatencion_causal_es_triangular_inferior():
 
 def test_autoatencion_causal_no_cambia_el_primer_token_al_agregar_tokens():
     X, W_q, W_k, W_v = _entradas_cat()
-    corta, _ = autoatencion(X[:2], W_q, W_k, W_v, causal=True)
-    larga, _ = autoatencion(X, W_q, W_k, W_v, causal=True)
+    corta, _ = autoatencion(X[:2], W_q, W_k, W_v, mascara=True)
+    larga, _ = autoatencion(X, W_q, W_k, W_v, mascara=True)
     assert np.allclose(corta, larga[:2])
 
 
 # ----------------------------------------------------------------- multicabeza
 
-def test_multicabeza_formas():
-    X, W_q, W_k, W_v = _entradas_cat()
-    W_o = np.eye(4)
-    salida, pesos = multicabeza(X, W_q, W_k, W_v, W_o, n_cabezas=2)
+def _dos_cabezas():
+    """Dos cabezas sobre subespacios distintos de las mismas proyecciones."""
+    _, W_q, W_k, W_v = _entradas_cat()
+    return [(W_q[:, :2], W_k[:, :2], W_v[:, :2]), (W_q[:, 2:], W_k[:, 2:], W_v[:, 2:])]
+
+
+def test_multicabeza_forma_la_da_wo():
+    X, *_ = _entradas_cat()
+    salida = multicabeza(X, _dos_cabezas(), np.eye(4))
     assert salida.shape == (3, 4)
-    assert pesos.shape == (2, 3, 3)
-    assert np.allclose(pesos.sum(axis=-1), 1.0)
 
 
-def test_multicabeza_con_una_cabeza_equivale_a_autoatencion():
+def test_multicabeza_con_una_cabeza_y_wo_identidad_es_autoatencion():
     X, W_q, W_k, W_v = _entradas_cat()
-    W_o = np.eye(4)
-    mc_salida, mc_pesos = multicabeza(X, W_q, W_k, W_v, W_o, n_cabezas=1)
-    aa_salida, aa_pesos = autoatencion(X, W_q, W_k, W_v)
-    assert np.allclose(mc_salida, aa_salida)
-    assert np.allclose(mc_pesos[0], aa_pesos)
+    esperado, _ = autoatencion(X, W_q, W_k, W_v)
+    assert np.allclose(multicabeza(X, [(W_q, W_k, W_v)], np.eye(4)), esperado)
 
 
-def test_multicabeza_causal_es_triangular_inferior():
-    X, W_q, W_k, W_v = _entradas_cat()
-    _, pesos = multicabeza(X, W_q, W_k, W_v, np.eye(4), n_cabezas=2, causal=True)
-    assert np.allclose(np.triu(pesos, k=1), 0.0)
+def test_multicabeza_concatena_en_el_orden_de_las_cabezas():
+    X, *_ = _entradas_cat()
+    cabezas = _dos_cabezas()
+    esperado = np.concatenate(
+        [autoatencion(X, *c)[0] for c in cabezas], axis=1
+    ) @ np.eye(4)
+    assert np.allclose(multicabeza(X, cabezas, np.eye(4)), esperado)
 
 
-def test_multicabeza_rechaza_dimension_no_divisible():
-    X, W_q, W_k, W_v = _entradas_cat()
+def test_multicabeza_propaga_la_mascara_a_cada_cabeza():
+    X, *_ = _entradas_cat()
+    cabezas = _dos_cabezas()
+    esperado = np.concatenate(
+        [autoatencion(X, *c, mascara=True)[0] for c in cabezas], axis=1
+    )
+    assert np.allclose(multicabeza(X, cabezas, np.eye(4), mascara=True), esperado)
+
+
+def test_multicabeza_rechaza_lista_vacia():
+    X, *_ = _entradas_cat()
     with pytest.raises(ValueError):
-        multicabeza(X, W_q, W_k, W_v, np.eye(4), n_cabezas=3)
+        multicabeza(X, [], np.eye(4))
 
 
 # ------------------------------------------------------------------ layer_norm
@@ -199,7 +211,7 @@ def test_layer_norm_aplica_gamma_y_beta():
     x = np.array([[1.0, 2.0, 3.0, 4.0]])
     gamma = np.array([2.0, 2.0, 2.0, 2.0])
     beta = np.array([1.0, 1.0, 1.0, 1.0])
-    assert np.allclose(layer_norm(x, gamma, beta), layer_norm(x) * 2.0 + 1.0)
+    assert np.allclose(layer_norm(x, gamma=gamma, beta=beta), layer_norm(x) * 2.0 + 1.0)
 
 
 def test_layer_norm_es_invariante_a_escala_y_desplazamiento():

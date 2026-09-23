@@ -52,6 +52,17 @@ attention mask.
 promediada sobre preguntas. **Es el numero a maximizar.** Baseline lexico
 ingenuo = 0,35.
 
+El evaluador compara la evidencia como **subcadena literal** del fragmento
+devuelto, previa normalizacion (minusculas y espacios colapsados; los acentos
+NO se sacan). Dos consecuencias:
+
+1. El chunking no puede reescribir el texto: se devuelve el fragmento crudo, y
+   el prefijo de metadatos se usa solo para embeber.
+2. `precision` = fragmentos devueltos con evidencia / fragmentos devueltos, asi
+   que con la evidencia en un solo fragmento el CR topea en `2/(top_k+1)`.
+   Medido en `experimentos/techo_chunking.py`: con corte por estructura, las 20
+   preguntas dev tienen su evidencia en UN fragmento. De ahi `top_k: 1`.
+
 ### Evidencia obligatoria
 
 Una fila por configuracion en la tabla del INFORME, cada una con su
@@ -134,22 +145,21 @@ python atencion/test_atencion.py atencion.py
 
 Criterio de exito: los 14 tests en verde con el archivo de la catedra sin tocar.
 
-### Firmas asumidas
-
-El archivo de tests de la catedra todavia no esta en el repo. Se implementan
-estas firmas, que son las del ejemplo de clase ("the cat sat", d = 4), y se
-reconcilian cuando llegue el test:
+### Firmas (reconciliadas con `atencion/test_atencion.py`)
 
 ```python
-softmax(x, eje=-1)                        -> ndarray
-atencion(Q, K, V, mascara=None)           -> (salida, pesos)
-autoatencion(X, W_q, W_k, W_v, causal=False) -> (salida, pesos)
-multicabeza(X, W_q, W_k, W_v, W_o, n_cabezas, causal=False) -> (salida, pesos)
-layer_norm(x, gamma=None, beta=None, eps=1e-5) -> ndarray
+softmax(M)                                  # softmax por fila (ultimo eje)
+atencion(Q, K, V, mascara=False)            -> (salida, A)
+autoatencion(X, Wq, Wk, Wv, mascara=False)  -> (salida, A)
+multicabeza(X, cabezas, Wo, mascara=False)  -> salida
+layer_norm(x, eps=1e-5)                     # media 0 y varianza 1 por fila
 ```
 
-Escalado por `1/sqrt(d_k)` dentro de `atencion`. La mascara es booleana o
-`-inf` aditiva; `True` = posicion visible.
+`cabezas` es una lista de ternas `(Wq, Wk, Wv)`, una por cabeza; las salidas se
+concatenan sobre la dimension de rasgos y `Wo` las mezcla. `mascara=True` aplica
+la mascara causal. `d_v` no tiene por que ser igual a `d_k`.
+
+**Estado: 14/14 en verde.**
 
 ---
 

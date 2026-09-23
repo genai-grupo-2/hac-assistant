@@ -81,7 +81,7 @@ def construir_config(args: argparse.Namespace) -> Config:
         cambios["chunking"] = chunking
     busqueda = {
         k: v
-        for k, v in (("top_k", args.top_k), ("umbral", args.umbral))
+        for k, v in (("top_k", args.top_k), ("umbral", args.umbral), ("margen", args.margen))
         if v is not None
     }
     if busqueda:
@@ -102,6 +102,7 @@ def parsear_argumentos(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--solapamiento", type=int, default=None)
     p.add_argument("--top-k", dest="top_k", type=int, default=None)
     p.add_argument("--umbral", type=float, default=None)
+    p.add_argument("--margen", type=float, default=None)
     return p.parse_args(argv)
 
 
@@ -114,7 +115,7 @@ def main(argv: list[str] | None = None) -> int:
     print(
         f"[recuperar] encoder={cfg.encoder} chunking={cfg.chunking.estrategia} "
         f"fragmentos={len(indice)} top_k={cfg.busqueda.top_k} "
-        f"umbral={cfg.busqueda.umbral}",
+        f"umbral={cfg.busqueda.umbral} margen={cfg.busqueda.margen}",
         file=sys.stderr,
     )
 

@@ -179,6 +179,19 @@ def test_indice_aplica_el_umbral(corpus: Path):
     assert len(con_umbral) < len(sin_umbral)
 
 
+def test_margen_recorta_los_que_quedan_lejos_del_mejor(corpus: Path):
+    sin_margen = _indice(corpus, top_k=5).buscar("visita")
+    con_margen = _indice(corpus, top_k=5, margen=0.01).buscar("visita")
+    assert len(con_margen) < len(sin_margen)
+    assert con_margen[0].fragmento.texto == sin_margen[0].fragmento.texto
+
+
+def test_margen_conserva_los_empatados(corpus: Path):
+    """Con margen amplio no se descarta nada: el corte es relativo, no fijo."""
+    indice = _indice(corpus, top_k=3, margen=2.0)
+    assert len(indice.buscar("visita")) == 3
+
+
 def test_indice_es_determinista(corpus: Path):
     a = [r.fragmento.texto for r in _indice(corpus, top_k=3).buscar("visita")]
     b = [r.fragmento.texto for r in _indice(corpus, top_k=3).buscar("visita")]

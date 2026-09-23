@@ -49,16 +49,20 @@ class Indice:
         return cls(fragmentos, encoder.codificar_pasajes(textos), encoder, cfg)
 
     def buscar(self, consulta: str, top_k: int | None = None,
-               umbral: float | None = None) -> list[Resultado]:
+               umbral: float | None = None, margen: float | None = None) -> list[Resultado]:
         """Devuelve los fragmentos mas parecidos, de mayor a menor coseno.
 
-        El umbral es lo que protege la precision: en una pregunta que se contesta
-        con un solo fragmento, devolver `top_k` fijo mete k-1 fragmentos sin
-        evidencia. Cortar por similitud deja que cada pregunta traiga lo que
-        necesita.
+        Cuantos devolver es *la* decision de la parte 1, porque el evaluador
+        calcula la precision como la fraccion de fragmentos devueltos que
+        contienen evidencia: si la evidencia vive en un solo fragmento,
+        devolver k fija el context_relevance en 2/(k+1) aunque el primero sea
+        el correcto. De ahi que el corte lo hagan `umbral` (absoluto) y
+        `margen` (relativo al mejor), y no un k fijo y grande.
         """
-        top_k = self.cfg.busqueda.top_k if top_k is None else top_k
-        umbral = self.cfg.busqueda.umbral if umbral is None else umbral
+        bus = self.cfg.busqueda
+        top_k = bus.top_k if top_k is None else top_k
+        umbral = bus.umbral if umbral is None else umbral
+        margen = bus.margen if margen is None else margen
 
         vector = self.encoder.codificar_consultas([consulta])[0]
         scores = self.matriz @ vector          # coseno: los vectores estan normalizados
@@ -66,10 +70,15 @@ class Indice:
         # argsort descendente estable: ante empate gana el fragmento mas temprano
         # del corpus, que esta ordenado alfabeticamente -> resultado determinista.
         orden = np.argsort(-scores, kind="stable")[:top_k]
+        elegidos = [i for i in orden if scores[i] >= umbral]
+
+        if margen > 0 and elegidos:
+            piso = scores[elegidos[0]] - margen
+            elegidos = [i for i in elegidos if scores[i] >= piso]
+
         return [
             Resultado(fragmento=self.fragmentos[i], score=float(scores[i]))
-            for i in orden
-            if scores[i] >= umbral
+            for i in elegidos
         ]
 
     def __len__(self) -> int:

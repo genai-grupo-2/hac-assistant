@@ -1,0 +1,72 @@
+[
+ {
+  "config": "estructura_180",
+  "fragmentos_totales": 53,
+  "palabras_por_fragmento": 41.3,
+  "evidencia_perdida": 0,
+  "techo_cr": 1.0,
+  "fragmentos_por_pregunta": 1.0,
+  "max_fragmentos_una_pregunta": 1,
+  "detalle_perdidas": []
+ },
+ {
+  "config": "estructura_120",
+  "fragmentos_totales": 53,
+  "palabras_por_fragmento": 41.3,
+  "evidencia_perdida": 0,
+  "techo_cr": 1.0,
+  "fragmentos_por_pregunta": 1.0,
+  "max_fragmentos_una_pregunta": 1,
+  "detalle_perdidas": []
+ },
+ {
+  "config": "estructura_80",
+  "fragmentos_totales": 55,
+  "palabras_por_fragmento": 39.8,
+  "evidencia_perdida": 0,
+  "techo_cr": 1.0,
+  "fragmentos_por_pregunta": 1.0,
+  "max_fragmentos_una_pregunta": 1,
+  "detalle_perdidas": []
+ },
+ {
+  "config": "estructura_300",
+  "fragmentos_totales": 53,
+  "palabras_por_fragmento": 41.3,
+  "evidencia_perdida": 0,
+  "techo_cr": 1.0,
+  "fragmentos_por_pregunta": 1.0,
+  "max_fragmentos_una_pregunta": 1,
+  "detalle_perdidas": []
+ },
+ {
+  "config": "ventana_150_40",
+  "fragmentos_totales": 26,
+  "palabras_por_fragmento": 103.8,
+  "evidencia_perdida": 0,
+  "techo_cr": 1.0,
+  "fragmentos_por_pregunta": 1.05,
+  "max_fragmentos_una_pregunta": 2,
+  "detalle_perdidas": []
+ },
+ {
+  "config": "ventana_80_30",
+  "fragmentos_totales": 47,
+  "palabras_por_fragmento": 69.6,
+  "evidencia_perdida": 0,
+  "techo_cr": 1.0,
+  "fragmentos_por_pregunta": 1.2,
+  "max_fragmentos_una_pregunta": 2,
+  "detalle_perdidas": []
+ },
+ {
+  "config": "ventana_60_20",
+  "fragmentos_totales": 59,
+  "palabras_por_fragmento": 54.9,
+  "evidencia_perdida": 0,
+  "techo_cr": 1.0,
+  "fragmentos_por_pregunta": 1.25,
+  "max_fragmentos_una_pregunta": 2,
+  "detalle_perdidas": []
+ }
+]

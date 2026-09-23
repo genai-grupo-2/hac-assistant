@@ -9,27 +9,53 @@ Estado a **2026-09-23**.
 
 | Parte | Puntos | Estado |
 |---|---|---|
-| 1 — RAG vectorial | 25 | 🟡 código listo, **sin medir** (falta el corpus) |
+| 1 — RAG vectorial | 25 | 🟡 pipeline listo y chunking validado; falta medir encoders (F5) |
 | 2 — Agente con tool calling | 30 | ⬜ no empezada |
 | 3 — Servidor MCP | 15 | ⬜ no empezada |
-| 4 — Atención en NumPy | 15 | 🟡 implementada, **falta el test oficial** |
-| 5 — Bloque a mano | 15 | ⬜ no empezada (sin IA) |
+| 4 — Atención en NumPy | 15 | ✅ **14/14 tests de la cátedra en verde** |
+| 5 — Bloque a mano | 15 | ⬜ no empezada (sin IA; consigna en `a_mano/ejercicio.md`) |
 
-## 🚧 Bloqueante: falta el andamiaje de la cátedra
+## Material de la cátedra
 
-El repo **no tiene** nada de lo que `mission.md` da por existente. Sin esos
-archivos no se puede medir nada, y sin medición las partes 1 a 3 no puntúan.
+✅ Ya está todo en el repo (mergeado el 2026-09-23): `datos/corpus/` con los 20
+documentos, las dos tandas de preguntas dev, `evaluar/evaluar.py`,
+`api/servidor.py` + `api/datos_api.json`, `atencion/test_atencion.py` y
+`a_mano/ejercicio.md`. Nada de eso se modifica.
 
-| Falta | Bloquea |
+Falta solo **instalar las dependencias** (`pip install -r requirements.txt`):
+`torch` y `sentence-transformers` son ~2 GB y hasta que no estén no se puede
+correr ningún encoder de verdad.
+
+## Hallazgo: el top-k es la decisión que más pesa
+
+`evaluar/evaluar.py` calcula `precision` = fragmentos devueltos que contienen
+evidencia / fragmentos devueltos, y `context_relevance` es la media armónica con
+el recall. Si la evidencia vive en **un solo** fragmento, devolver k fragmentos
+topea el CR en `2/(k+1)`:
+
+| top_k | CR máximo posible |
 |---|---|
-| `datos/corpus/` (20 documentos .md) | F5, y toda la medición de la parte 1 |
-| `datos/preguntas_recuperacion_dev.jsonl` | F5 |
-| `datos/preguntas_agente_dev.jsonl` | F7, F9 |
-| `evaluar/evaluar.py` | F5, F7, F9 |
-| `api/servidor.py` + `api/README.md` | F6, F7, F8 |
-| `atencion/test_atencion.py` | F2 (cierre) |
+| 1 | 1,00 |
+| 2 | 0,67 |
+| 3 | 0,50 |
+| 4 | 0,40 |
 
-Hay que clonar/copiar el material de la cátedra dentro del repo antes de seguir.
+`experimentos/techo_chunking.py` (corre sin modelos) mide el techo de cada
+chunking contra el corpus real:
+
+| config | frags | pal/frag | evidencia perdida | techo CR | k medio | k máx |
+|---|---|---|---|---|---|---|
+| estructura (80–300) | 53–55 | ~41 | **0** | 1,00 | **1,00** | **1** |
+| ventana 150/40 | 26 | 104 | 0 | 1,00 | 1,05 | 2 |
+| ventana 80/30 | 47 | 70 | 0 | 1,00 | 1,20 | 2 |
+| ventana 60/20 | 59 | 55 | 0 | 1,00 | 1,25 | 2 |
+
+Ningún chunking pierde evidencia, y el corte por estructura deja la evidencia de
+las 20 preguntas dev dentro de un único fragmento. De ahí `top_k: 1` en
+`config.yaml`: todo el problema se reduce a acertar el fragmento en el puesto 1.
+Como red por si el set de test trae alguna pregunta que necesite dos fragmentos,
+el índice soporta `margen`, un corte relativo al mejor score (hoy desactivado,
+lo tunea F5).
 
 ## Features
 
@@ -38,17 +64,18 @@ Hay que clonar/copiar el material de la cátedra dentro del repo antes de seguir
 | # | Feature | Dónde | Estado |
 |---|---|---|---|
 | F1 | Scaffolding del proyecto | `CLAUDE.md`, `SPEC.md`, `ROADMAP.md`, `requirements.txt`, `pytest.ini` | ✅ |
-| F2 | Atención en NumPy (parte 4) | `atencion.py`, `tests/test_attention.py` | 🟡 24 tests propios en verde; falta correr el de la cátedra |
+| F2 | Atención en NumPy (parte 4) | `atencion.py`, `tests/test_attention.py` | ✅ 14/14 de la cátedra + 25 propios |
 | F3 | Chunking + configuración | `retriever/corpus.py`, `retriever/chunking.py`, `retriever/config.py`, `config.yaml` | ✅ |
-| F4 | Encoders + índice + CLI | `retriever/encoders.py`, `retriever/index.py`, `recuperar.py` | ✅ código; encoders nunca ejecutados (falta descargar modelos) |
+| F4 | Encoders + índice + CLI | `retriever/encoders.py`, `retriever/index.py`, `recuperar.py` | ✅ código; encoders aún no ejecutados (faltan las deps) |
+| F4b | Diagnóstico de techo del chunking | `experimentos/techo_chunking.py`, `.json` | ✅ |
 
 Detalle de lo entregado:
 
-- **`atencion.py`** — `softmax`, `atencion`, `autoatencion` (máscara causal
-  opcional), `multicabeza`, `layer_norm`. Solo NumPy, con dimensiones de batch
-  a la izquierda. ⚠️ Las firmas están **asumidas** (ver `SPEC.md` § Parte 4):
-  `atencion` y compañía devuelven `(salida, pesos)`. Hay que reconciliarlas
-  cuando llegue `atencion/test_atencion.py`.
+- **`atencion.py`** — `softmax`, `atencion`, `autoatencion`, `multicabeza`,
+  `layer_norm`. Solo NumPy. **Parte 4 cerrada**: `python atencion/test_atencion.py
+  atencion.py` da 14/14. Las firmas se reconciliaron con las reales (`mascara`
+  es un flag booleano, no un arreglo; `multicabeza(X, cabezas, Wo)` recibe una
+  lista de ternas y devuelve solo la salida).
 - **`retriever/`** — chunking por estructura Markdown o por ventana
   deslizante, prefijo opcional de metadatos, catálogo de 6 encoders
   (`bert_base` y `bert_multi` como línea de base con mean pooling; `minilm`,
@@ -56,14 +83,14 @@ Detalle de lo entregado:
   denso con coseno exacto, top-k y umbral.
 - **`config.yaml`** — la config que correrá la cátedra. Hoy tiene valores de
   arranque **no medidos**; se reemplaza por la fila ganadora de F5.
-- **Tests** — 45 en verde (`python -m pytest`), sin descargar ningún modelo:
+- **Tests** — 48 propios en verde (`python -m pytest`), sin descargar ningún modelo:
   usan un encoder falso de bolsa de palabras.
 
 ### Tercio 2 — próximo
 
 | # | Feature | Entregable | Depende de |
 |---|---|---|---|
-| F5 | Barrido de experimentos de la parte 1 | `experimentos/*.eval.json`, tabla, `config.yaml` final | corpus + preguntas + `evaluar.py` |
+| F5 | Barrido de experimentos de la parte 1 | `experimentos/*.eval.json`, tabla, `config.yaml` final | `pip install -r requirements.txt` |
 | F6 | Cliente de la API del hospital (5 tools) | `tools/hospital_api.py` + tests con la API levantada | `api/servidor.py` |
 | F7 | Agente LangChain (parte 2) | `agente.py`, `respuestas.jsonl`, `.eval.json`, log `.md` con usage y costo | F5, F6, `OPENROUTER_API_KEY` |
 
@@ -89,7 +116,6 @@ comparación de la parte 3 mida el transporte y no otra cosa.
 
 | Riesgo | Mitigación |
 |---|---|
-| Firmas de `atencion.py` distintas a las del test de la cátedra | adaptar apenas llegue el archivo; la lógica no cambia |
 | Tunear contra `dev` y caer en test | mantener el barrido chico y preferir configs simples que ganen por margen, no por décimas |
 | Costo del juez de OpenRouter | correr el evaluador solo ante un cambio que valga la pena medir; registrar el costo por corrida en los logs |
 | `bge_m3` muy lento en CPU | es opcional; con 3 encoders alcanza para la consigna |

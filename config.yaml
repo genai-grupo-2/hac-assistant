@@ -3,21 +3,30 @@
 # Esta es la config que corre la catedra sobre las preguntas de test, asi que
 # tiene que quedar fija en la ganadora del barrido de experimentos.
 #
-# ESTADO: valores de arranque, TODAVIA NO MEDIDOS contra el evaluador.
-# Se reemplazan por la fila ganadora de experimentos/ cuando este el corpus.
+# ESTADO: el chunking y el top_k salen del diagnostico de techo
+# (experimentos/techo_chunking.py, sin modelos). El encoder TODAVIA NO fue
+# medido con el evaluador: eso es F5.
 
 nombre: arranque
 corpus: datos/corpus
-encoder: e5_small          # ver claves en recuperador/encoders.py:CATALOGO
+encoder: e5_small          # ver claves en retriever/encoders.py:CATALOGO
 
 chunking:
-  estrategia: estructura   # estructura | ventana
-  max_palabras: 180        # tope duro de un fragmento
+  # Corte por encabezados Markdown. El diagnostico da techo_cr = 1.0 (no pierde
+  # ninguna evidencia) con 53 fragmentos de ~41 palabras, y deja la evidencia de
+  # cada una de las 20 preguntas dev dentro de UN solo fragmento.
+  estrategia: estructura
+  max_palabras: 180        # no lo activa casi nunca: la seccion mas larga entra
   min_palabras: 20         # por debajo, se fusiona con el fragmento anterior
   tamano: 150              # solo estrategia "ventana"
   solapamiento: 40         # solo estrategia "ventana"
   prefijo_metadatos: true  # antepone "documento > seccion" antes de embeber
 
 busqueda:
-  top_k: 4                 # tope de fragmentos por pregunta
-  umbral: 0.0              # coseno minimo; sube la precision, puede costar recall
+  # El evaluador calcula precision = fragmentos devueltos que contienen
+  # evidencia / fragmentos devueltos. Si la evidencia vive en un solo fragmento,
+  # devolver k topea el context_relevance en 2/(k+1): 1.00 con k=1, 0.67 con
+  # k=2, 0.40 con k=4. Por eso top_k=1 y el trabajo lo hace el ranking.
+  top_k: 1
+  umbral: 0.0              # coseno minimo absoluto
+  margen: 0.0              # corte relativo al mejor score; 0.0 = desactivado

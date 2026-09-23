@@ -29,10 +29,18 @@ class ConfigChunking:
 
 @dataclass(frozen=True)
 class ConfigBusqueda:
-    """Cuantos fragmentos devolver y desde que coseno."""
+    """Cuantos fragmentos devolver y desde que coseno.
 
-    top_k: int = 4
+    `margen` es un corte *relativo* al mejor score: se descarta todo fragmento
+    cuyo coseno este mas de `margen` por debajo del primero. Sirve para que la
+    cantidad de fragmentos la decida cada pregunta en vez de ser fija: cuando
+    hay un ganador claro devuelve uno solo (precision 1), y cuando dos
+    fragmentos empatan los devuelve a los dos. Con 0.0 queda desactivado.
+    """
+
+    top_k: int = 1
     umbral: float = 0.0
+    margen: float = 0.0
 
 
 @dataclass(frozen=True)
