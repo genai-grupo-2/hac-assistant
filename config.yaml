@@ -3,11 +3,10 @@
 # Esta es la config que corre la catedra sobre las preguntas de test, asi que
 # tiene que quedar fija en la ganadora del barrido de experimentos.
 #
-# ESTADO: el chunking y el top_k salen del diagnostico de techo
-# (experimentos/techo_chunking.py, sin modelos). El encoder TODAVIA NO fue
-# medido con el evaluador: eso es F5.
+# CONFIGURACION GANADORA F5: e5_small + estructura + top_k=1.
+# context_relevance en dev: 0.90.
 
-nombre: arranque
+nombre: e5_small_estructura_k1
 corpus: datos/corpus
 encoder: e5_small          # ver claves en retriever/encoders.py:CATALOGO
 
