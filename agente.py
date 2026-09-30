@@ -15,12 +15,13 @@ from pathlib import Path
 from typing import Any
 
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
-from langchain_core.tools import StructuredTool
+from langchain_core.tools import BaseTool, StructuredTool
 from langchain_openai import ChatOpenAI
 
 from retriever.config import cargar_config
 from retriever.index import Indice
-from tools.hospital_api import crear_tools_api
+from tools.hospital_api import HospitalAPI
+from tools.hospital_tools import HerramientasHospital, crear_tools_langchain
 
 
 MODELO = "deepseek/deepseek-v4-flash-0731"
@@ -113,19 +114,83 @@ def usage_de(mensaje: AIMessage) -> dict[str, Any]:
 
 def crear_tools(indice: Indice) -> list[StructuredTool]:
     """Crea las seis tools exigidas por la consigna."""
-    def buscar_documentos(consulta: str) -> str:
-        resultados = indice.buscar(consulta)
-        return json.dumps(
-            {"fragmentos": [r.fragmento.texto for r in resultados]},
-            ensure_ascii=False,
-        )
+    return crear_tools_langchain(HerramientasHospital(indice, HospitalAPI()))
 
-    documental = StructuredTool.from_function(
-        buscar_documentos,
-        name="buscar_documentos",
-        description="Busca en los documentos estables del hospital la información normativa o de procedimientos necesaria para responder una consulta. Usala para horarios de visita, requisitos, preparación de estudios, derechos, acompañamiento y otras reglas del hospital.",
-    )
-    return [documental, *crear_tools_api()]
+
+async def ejecutar_pregunta_async(
+    pregunta: dict[str, Any],
+    modelo: Any,
+    tools: list[BaseTool],
+    max_turnos: int = 8,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Ejecuta el ciclo asincronico requerido por las tools MCP."""
+    por_nombre = {tool.name: tool for tool in tools}
+    mensajes: list[Any] = [
+        SystemMessage(content=SYSTEM_PROMPT),
+        HumanMessage(content=pregunta["pregunta"]),
+    ]
+    contextos: list[str] = []
+    herramientas: list[str] = []
+    llamadas: list[dict[str, Any]] = []
+    modelos: list[dict[str, Any]] = []
+    respuesta = ""
+
+    for turno in range(1, max_turnos + 1):
+        mensaje = await modelo.ainvoke(mensajes)
+        modelos.append({"turno": turno, **usage_de(mensaje)})
+        mensajes.append(mensaje)
+        tool_calls = list(getattr(mensaje, "tool_calls", None) or [])
+        if not tool_calls:
+            respuesta = texto_mensaje(mensaje.content).strip()
+            break
+
+        for llamada in tool_calls:
+            nombre = llamada.get("name", "")
+            argumentos = llamada.get("args") or {}
+            herramientas.append(nombre)
+            tool = por_nombre.get(nombre)
+            if tool is None:
+                resultado = json.dumps(
+                    {"error": f"tool inexistente: {nombre}"}, ensure_ascii=False
+                )
+            else:
+                try:
+                    resultado = str(await tool.ainvoke(argumentos))
+                except Exception as error:
+                    resultado = json.dumps({"error": str(error)}, ensure_ascii=False)
+            contextos.append(resultado)
+            llamadas.append(
+                {
+                    "turno": turno,
+                    "tool": nombre,
+                    "argumentos": json_seguro(argumentos),
+                    "resultado": resultado,
+                }
+            )
+            mensajes.append(
+                ToolMessage(
+                    content=resultado,
+                    tool_call_id=llamada.get("id", f"tool-{turno}-{len(llamadas)}"),
+                    name=nombre,
+                )
+            )
+    else:
+        respuesta = "No pude completar la consulta dentro del limite de pasos."
+
+    salida = {
+        "id": pregunta.get("id"),
+        "respuesta": respuesta,
+        "contextos": contextos,
+        "herramientas": herramientas,
+    }
+    registro = {
+        "id": pregunta.get("id"),
+        "pregunta": pregunta.get("pregunta"),
+        "llamadas": llamadas,
+        "respuesta": respuesta,
+        "modelos": modelos,
+    }
+    return salida, registro
 
 
 def ejecutar_pregunta(

@@ -3,15 +3,15 @@
 Entrega: **viernes 9 de octubre de 2026**. Consigna completa en [`mission.md`](mission.md),
 contratos técnicos en [`SPEC.md`](SPEC.md), convenciones en [`CLAUDE.md`](CLAUDE.md).
 
-Estado a **2026-09-23**.
+Estado a **2026-09-30**.
 
 ## Estado general
 
 | Parte | Puntos | Estado |
 |---|---|---|
-| 1 — RAG vectorial | 25 | 🟡 pipeline listo y chunking validado; falta medir encoders (F5) |
-| 2 — Agente con tool calling | 30 | ✅ implementada y evaluada; falta integrar al informe final |
-| 3 — Servidor MCP | 15 | ⬜ no empezada |
+| 1 — RAG vectorial | 25 | ✅ implementada, medida y documentada |
+| 2 — Agente con tool calling | 30 | ✅ implementada, evaluada y documentada |
+| 3 — Servidor MCP | 15 | 🟡 implementada y evaluada; faltan capturas del Inspector |
 | 4 — Atención en NumPy | 15 | ✅ **14/14 tests de la cátedra en verde** |
 | 5 — Bloque a mano | 15 | ⬜ no empezada (sin IA; consigna en `a_mano/ejercicio.md`) |
 
@@ -66,7 +66,7 @@ lo tunea F5).
 | F1 | Scaffolding del proyecto | `CLAUDE.md`, `SPEC.md`, `ROADMAP.md`, `requirements.txt`, `pytest.ini` | ✅ |
 | F2 | Atención en NumPy (parte 4) | `atencion.py`, `tests/test_attention.py` | ✅ 14/14 de la cátedra + 25 propios |
 | F3 | Chunking + configuración | `retriever/corpus.py`, `retriever/chunking.py`, `retriever/config.py`, `config.yaml` | ✅ |
-| F4 | Encoders + índice + CLI | `retriever/encoders.py`, `retriever/index.py`, `recuperar.py` | ✅ código; encoders aún no ejecutados (faltan las deps) |
+| F4 | Encoders + índice + CLI | `retriever/encoders.py`, `retriever/index.py`, `recuperar.py` | ✅ implementado y ejecutado |
 | F4b | Diagnóstico de techo del chunking | `experimentos/techo_chunking.py`, `.json` | ✅ |
 
 Detalle de lo entregado:
@@ -86,25 +86,25 @@ Detalle de lo entregado:
 - **Tests** — 48 propios en verde (`python -m pytest`), sin descargar ningún modelo:
   usan un encoder falso de bolsa de palabras.
 
-### Tercio 2 — próximo
+### Tercio 2 — hecho
 
 | # | Feature | Entregable | Depende de |
 |---|---|---|---|
-| F5 | Barrido de experimentos de la parte 1 | `experimentos/*.eval.json`, tabla, `config.yaml` final | `pip install -r requirements.txt` |
-| F6 | Cliente de la API del hospital (5 tools) | `tools/hospital_api.py` + prueba contra la API levantada | `api/servidor.py` |
-| F7 | Agente LangChain (parte 2) | `agente.py`, `respuestas.jsonl`, `.eval.json` y log `.md` listos | F5, F6, `OPENROUTER_API_KEY` |
+| F5 | Barrido de experimentos de la parte 1 | `experimentos/*.eval.json`, tabla, `config.yaml` final | ✅ |
+| F6 | Cliente de la API del hospital (5 tools) | `tools/hospital_api.py` + prueba contra la API levantada | ✅ |
+| F7 | Agente LangChain (parte 2) | `agente.py`, `respuestas.jsonl`, `.eval.json` y log `.md` listos | ✅ |
 
-F5 es lo primero: el ruteo y la fidelidad del agente dependen de que el
-recuperador ya esté afinado. El barrido mínimo son 3 encoders × 2 chunkings ×
-3 top-k, con `bert_base` como línea de base obligatoria.
+El barrido de F5 quedó cerrado con 3 encoders × 2 chunkings × 3 valores de
+top-k y `bert_base` como línea de base obligatoria. La configuración ganadora
+quedó fijada en `config.yaml`.
 
-### Tercio 3 — después
+### Tercio 3 — en curso
 
 | # | Feature | Entregable | Depende de |
 |---|---|---|---|
-| F8 | Servidor MCP | `servidor_mcp.py` (stdio, SDK `mcp`), capturas en `experimentos/inspector/` | F6 |
-| F9 | Agente cliente MCP | `agente_mcp.py`, `respuestas_mcp.jsonl`, `.eval.json`, log `.md` | F7, F8 |
-| F10 | Informe | `INFORME.md` | todo lo anterior |
+| F8 | Servidor MCP | `servidor_mcp.py` listo; faltan capturas en `experimentos/inspector/` | 🟡 |
+| F9 | Agente cliente MCP | `agente_mcp.py`, `respuestas_mcp.jsonl`, `.eval.json`, log `.md` | ✅ |
+| F10 | Informe | actualizado con Partes 1, 2 y benchmark MCP; falta cierre final | 🟡 |
 | F11 | Parte 5 a mano | `a_mano/` escaneado | **sin IA** |
 
 Restricción de F9: `agente_mcp.py` no puede tener código propio para consultar

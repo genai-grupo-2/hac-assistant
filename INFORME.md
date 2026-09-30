@@ -1,7 +1,7 @@
 # Informe — Asistente del Hospital Arroyo Claro
 
-**Fecha de actualización:** 24 de septiembre de 2026  
-**Estado:** avance parcial; Parte 1 completa y partes 2, 3 y 5 pendientes.
+**Fecha de actualización:** 30 de septiembre de 2026
+**Estado:** Partes 1, 2 y 4 completas; Parte 3 implementada y evaluada, con capturas del Inspector pendientes; Parte 5 pendiente.
 
 ## 1. Resumen ejecutivo
 
@@ -127,7 +127,42 @@ llamadas, argumentos, respuestas y usage de cada llamada al modelo.
 
 ### Parte 3 — Servidor MCP
 
-Todavía pendiente. Falta implementar servidor_mcp.py y agente_mcp.py, probar las seis herramientas con MCP Inspector, guardar las capturas y generar la evaluación comparativa con la Parte 2.
+La implementación está completa en `servidor_mcp.py` y `agente_mcp.py`. El
+servidor usa transporte `stdio` y el SDK oficial `mcp`; publica las seis
+herramientas exigidas. El cliente abre una sesión MCP, descubre las herramientas
+con `tools/list` mediante `langchain-mcp-adapters` y las ejecuta con
+`tools/call`. No contiene código propio de acceso a la API ni al recuperador:
+esas implementaciones viven en `tools/hospital_tools.py` y son compartidas con
+la Parte 2.
+
+Se ejecutó el benchmark completo de 12 preguntas. Los artefactos son
+`respuestas_mcp.jsonl`, `respuestas_mcp.jsonl.eval.json` y
+`respuestas_mcp.log.md`. Los resultados fueron:
+
+- ruteo: **1.000**;
+- Context Relevance: **5.000/5**;
+- Answer Faithfulness: **5.000/5**;
+- Answer Relevance: **5.000/5**;
+- costo del agente: **USD 0.00347494**;
+- costo del juez: **USD 0.01923**.
+
+Las seis herramientas también se descubrieron y llamaron correctamente desde
+MCP Inspector. Todavía falta guardar las capturas de esa verificación en
+`experimentos/inspector/` para cerrar el entregable visual obligatorio.
+
+#### Comparación Parte 2 vs. Parte 3
+
+| Implementación | Context Relevance | Faithfulness | Answer Relevance | Ruteo | Costo agente | Costo juez | Costo corrida |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| LangChain directo | 4.917 | 5.000 | 4.917 | 1.000 | USD 0.00327254 | USD 0.01852 | USD 0.02179254 |
+| LangChain + MCP | **5.000** | **5.000** | **5.000** | 1.000 | USD 0.00347494 | USD 0.01923 | USD 0.02270494 |
+
+El ruteo se mantuvo perfecto. La corrida MCP mejoró A11: el nuevo muestreo del
+modelo incluyó todos los requisitos documentales y llevó Context Relevance y
+Answer Relevance de 4 a 5. No se atribuye esa diferencia al transporte MCP,
+porque el prompt, el modelo y las fuentes son los mismos y el modelo es
+generativo. El costo del agente MCP fue USD 0.00020240 mayor; la diferencia es
+compatible con una salida algo más larga y se verifica en los logs de usage.
 
 ### Parte 4 — Atención en NumPy
 
@@ -146,6 +181,11 @@ Pendiente y debe resolverse sin IA. Falta completar las cuentas manuscritas, las
 - cliente de la API y agente LangChain de la Parte 2;
 - prueba offline del ciclo de tool calling;
 - respuestas, evaluación y log del benchmark de la Parte 2;
+- servidor y cliente MCP de la Parte 3;
+- respuestas, evaluación y log del benchmark MCP;
 - este informe parcial.
 
-El informe deberá ampliarse al completar las Partes 2, 3 y 5, incluyendo los resultados de los agentes, el análisis de fallos, la comparación MCP y el costo total de la misión.
+El costo acumulado de las dos corridas de agentes y sus evaluaciones es
+**USD 0.04449748**. La Parte 1 no usó juez y no generó costo de OpenRouter.
+Antes de la entrega falta contrastar este total con el dashboard de actividad,
+incorporar las capturas del MCP Inspector y completar la Parte 5.
