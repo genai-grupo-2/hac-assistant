@@ -26,6 +26,21 @@ from tools.hospital_api import crear_tools_api
 MODELO = "deepseek/deepseek-v4-flash-0731"
 BASE_URL = "https://openrouter.ai/api/v1"
 
+
+def cargar_env_local(ruta: str | Path = ".env") -> None:
+    """Carga variables simples de un .env sin sobrescribir el entorno."""
+    archivo = Path(ruta)
+    if not archivo.exists():
+        return
+    for linea in archivo.read_text(encoding="utf-8").splitlines():
+        linea = linea.strip()
+        if not linea or linea.startswith("#") or "=" not in linea:
+            continue
+        clave, valor = linea.split("=", 1)
+        clave, valor = clave.strip(), valor.strip().strip('"').strip("'")
+        if clave and valor and clave not in os.environ:
+            os.environ[clave] = valor
+
 SYSTEM_PROMPT = """Sos el asistente del Hospital Provincial Arroyo Claro.
 Respondé en español, de forma clara y breve.
 
@@ -243,6 +258,7 @@ def parsear_argumentos(argv: list[str] | None = None) -> argparse.Namespace:
 
 def main(argv: list[str] | None = None) -> int:
     args = parsear_argumentos(argv)
+    cargar_env_local()
     if not os.environ.get("OPENROUTER_API_KEY"):
         print("falta la variable OPENROUTER_API_KEY", file=sys.stderr)
         return 2

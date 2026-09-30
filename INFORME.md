@@ -108,8 +108,22 @@ La evaluación de recuperación no utiliza un juez LLM, por lo que estas corrida
 
 La implementación está completa en agente.py y tools/hospital_api.py. Las seis
 tools fueron verificadas contra la API local y el ciclo de tool calling tiene
-pruebas offline. Queda ejecutar el benchmark real con OPENROUTER_API_KEY,
-generar respuestas.jsonl, su evaluación y el log de uso y costos.
+pruebas offline.
+
+Se ejecutó el benchmark completo de 12 preguntas con el modelo indicado. Los
+artefactos son respuestas.jsonl, respuestas.jsonl.eval.json y respuestas.log.md.
+Los resultados fueron:
+
+- ruteo: **1.000**;
+- Context Relevance: **4.917/5**;
+- Answer Faithfulness: **5.000/5**;
+- Answer Relevance: **4.917/5**;
+- costo del juez: **USD 0.01852**.
+
+Las 12 preguntas tuvieron ruteo perfecto. La única pregunta que no obtuvo 5
+en todas las dimensiones fue A11, con Context Relevance y Answer Relevance 4;
+Faithfulness y ruteo fueron 5 y 1.0 respectivamente. El log conserva las
+llamadas, argumentos, respuestas y usage de cada llamada al modelo.
 
 ### Parte 3 — Servidor MCP
 
@@ -131,6 +145,7 @@ Pendiente y debe resolverse sin IA. Falta completar las cuentas manuscritas, las
 - resultado validado de la configuración ganadora en experimentos/ganadora.jsonl.eval.json;
 - cliente de la API y agente LangChain de la Parte 2;
 - prueba offline del ciclo de tool calling;
+- respuestas, evaluación y log del benchmark de la Parte 2;
 - este informe parcial.
 
 El informe deberá ampliarse al completar las Partes 2, 3 y 5, incluyendo los resultados de los agentes, el análisis de fallos, la comparación MCP y el costo total de la misión.
