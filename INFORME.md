@@ -1,7 +1,7 @@
 # Informe — Asistente del Hospital Arroyo Claro
 
 **Fecha de actualización:** 30 de septiembre de 2026
-**Estado:** Partes 1, 2 y 4 completas; Parte 3 implementada y evaluada, con capturas del Inspector pendientes; Parte 5 pendiente.
+**Estado:** Partes 1, 2, 3 y 4 completas; Parte 5 pendiente.
 
 ## 1. Resumen ejecutivo
 
@@ -147,8 +147,9 @@ Se ejecutó el benchmark completo de 12 preguntas. Los artefactos son
 - costo del juez: **USD 0.01923**.
 
 Las seis herramientas también se descubrieron y llamaron correctamente desde
-MCP Inspector. Todavía falta guardar las capturas de esa verificación en
-`experimentos/inspector/` para cerrar el entregable visual obligatorio.
+MCP Inspector. Las seis llamadas quedaron documentadas con capturas PNG en
+`experimentos/inspector/`, una por herramienta, incluyendo el resultado y el
+estado `OK` del protocolo.
 
 #### Comparación Parte 2 vs. Parte 3
 
@@ -183,9 +184,10 @@ Pendiente y debe resolverse sin IA. Falta completar las cuentas manuscritas, las
 - respuestas, evaluación y log del benchmark de la Parte 2;
 - servidor y cliente MCP de la Parte 3;
 - respuestas, evaluación y log del benchmark MCP;
+- seis capturas de verificación de las herramientas en MCP Inspector;
 - este informe parcial.
 
 El costo acumulado de las dos corridas de agentes y sus evaluaciones es
 **USD 0.04449748**. La Parte 1 no usó juez y no generó costo de OpenRouter.
 Antes de la entrega falta contrastar este total con el dashboard de actividad,
-incorporar las capturas del MCP Inspector y completar la Parte 5.
+y completar la Parte 5.

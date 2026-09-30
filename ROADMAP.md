@@ -11,7 +11,7 @@ Estado a **2026-09-30**.
 |---|---|---|
 | 1 — RAG vectorial | 25 | ✅ implementada, medida y documentada |
 | 2 — Agente con tool calling | 30 | ✅ implementada, evaluada y documentada |
-| 3 — Servidor MCP | 15 | 🟡 implementada y evaluada; faltan capturas del Inspector |
+| 3 — Servidor MCP | 15 | ✅ implementada, evaluada y documentada con capturas del Inspector |
 | 4 — Atención en NumPy | 15 | ✅ **14/14 tests de la cátedra en verde** |
 | 5 — Bloque a mano | 15 | ⬜ no empezada (sin IA; consigna en `a_mano/ejercicio.md`) |
 
@@ -102,7 +102,7 @@ quedó fijada en `config.yaml`.
 
 | # | Feature | Entregable | Depende de |
 |---|---|---|---|
-| F8 | Servidor MCP | `servidor_mcp.py` listo; faltan capturas en `experimentos/inspector/` | 🟡 |
+| F8 | Servidor MCP | `servidor_mcp.py` y seis capturas en `experimentos/inspector/` | ✅ |
 | F9 | Agente cliente MCP | `agente_mcp.py`, `respuestas_mcp.jsonl`, `.eval.json`, log `.md` | ✅ |
 | F10 | Informe | actualizado con Partes 1, 2 y benchmark MCP; falta cierre final | 🟡 |
 | F11 | Parte 5 a mano | `a_mano/` escaneado | **sin IA** |

@@ -22,5 +22,11 @@ Después se llamó manualmente a cada una desde la pestaña **Tools**:
 | `consultar_espera` | sin argumentos | espera por los cinco niveles de triage |
 
 Todas las llamadas aparecieron como `tools/call` con estado `OK` en el panel de
-protocolo. Las capturas PNG exigidas por la consigna todavía deben guardarse en
-este directorio.
+protocolo. La verificación visual queda registrada en estas capturas:
+
+- `buscar_documentos.png`
+- `consultar_camas.png`
+- `consultar_guardia.png`
+- `consultar_turnos.png`
+- `consultar_farmacia.png`
+- `consultar_espera.png`
