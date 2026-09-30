@@ -10,7 +10,7 @@ Estado a **2026-09-23**.
 | Parte | Puntos | Estado |
 |---|---|---|
 | 1 — RAG vectorial | 25 | 🟡 pipeline listo y chunking validado; falta medir encoders (F5) |
-| 2 — Agente con tool calling | 30 | ⬜ no empezada |
+| 2 — Agente con tool calling | 30 | 🟡 implementación lista; benchmark pendiente |
 | 3 — Servidor MCP | 15 | ⬜ no empezada |
 | 4 — Atención en NumPy | 15 | ✅ **14/14 tests de la cátedra en verde** |
 | 5 — Bloque a mano | 15 | ⬜ no empezada (sin IA; consigna en `a_mano/ejercicio.md`) |
@@ -91,8 +91,8 @@ Detalle de lo entregado:
 | # | Feature | Entregable | Depende de |
 |---|---|---|---|
 | F5 | Barrido de experimentos de la parte 1 | `experimentos/*.eval.json`, tabla, `config.yaml` final | `pip install -r requirements.txt` |
-| F6 | Cliente de la API del hospital (5 tools) | `tools/hospital_api.py` + tests con la API levantada | `api/servidor.py` |
-| F7 | Agente LangChain (parte 2) | `agente.py`, `respuestas.jsonl`, `.eval.json`, log `.md` con usage y costo | F5, F6, `OPENROUTER_API_KEY` |
+| F6 | Cliente de la API del hospital (5 tools) | `tools/hospital_api.py` + prueba contra la API levantada | `api/servidor.py` |
+| F7 | Agente LangChain (parte 2) | `agente.py` listo; faltan `respuestas.jsonl`, `.eval.json` y log `.md` con usage y costo | F5, F6, `OPENROUTER_API_KEY` |
 
 F5 es lo primero: el ruteo y la fidelidad del agente dependen de que el
 recuperador ya esté afinado. El barrido mínimo son 3 encoders × 2 chunkings ×

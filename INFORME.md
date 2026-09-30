@@ -106,7 +106,10 @@ La evaluación de recuperación no utiliza un juez LLM, por lo que estas corrida
 
 ### Parte 2 — Agente con tool calling
 
-Todavía pendiente. Falta implementar agente.py, las seis herramientas, la integración con OpenRouter, las corridas del benchmark, los archivos de respuestas y los logs con tokens y costos.
+La implementación está completa en agente.py y tools/hospital_api.py. Las seis
+tools fueron verificadas contra la API local y el ciclo de tool calling tiene
+pruebas offline. Queda ejecutar el benchmark real con OPENROUTER_API_KEY,
+generar respuestas.jsonl, su evaluación y el log de uso y costos.
 
 ### Parte 3 — Servidor MCP
 
@@ -126,7 +129,8 @@ Pendiente y debe resolverse sin IA. Falta completar las cuentas manuscritas, las
 - 18 resultados JSONL de experimentos;
 - 18 evaluaciones .eval.json reproducibles;
 - resultado validado de la configuración ganadora en experimentos/ganadora.jsonl.eval.json;
+- cliente de la API y agente LangChain de la Parte 2;
+- prueba offline del ciclo de tool calling;
 - este informe parcial.
 
 El informe deberá ampliarse al completar las Partes 2, 3 y 5, incluyendo los resultados de los agentes, el análisis de fallos, la comparación MCP y el costo total de la misión.
-
