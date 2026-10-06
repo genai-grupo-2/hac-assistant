@@ -1,7 +1,7 @@
 # Informe — Asistente del Hospital Arroyo Claro
 
 **Fecha de actualización:** 30 de septiembre de 2026
-**Estado:** Partes 1, 2, 3 y 4 completas; Parte 5 pendiente.
+**Estado:** Partes 1, 2, 3, 4 y 5 completas.
 
 ## 1. Resumen ejecutivo
 
@@ -171,9 +171,9 @@ Completada antes de este informe. atencion.py pasa los 14 tests entregados por l
 
 ### Parte 5 — Bloque de transformer a mano
 
-Pendiente y debe resolverse sin IA. Falta completar las cuentas manuscritas, las cinco preguntas finales y guardar los escaneos en a_mano/.
+Completada sin IA. El escaneo de las hojas con las cuentas manuscritas, los casos con y sin máscara y las cinco respuestas finales está en `a_mano/a_mano.pdf`.
 
-## 4. Entregables incorporados en este avance
+## 4. Entregables incorporados
 
 - configuración ganadora en config.yaml;
 - 18 resultados JSONL de experimentos;
@@ -185,9 +185,16 @@ Pendiente y debe resolverse sin IA. Falta completar las cuentas manuscritas, las
 - servidor y cliente MCP de la Parte 3;
 - respuestas, evaluación y log del benchmark MCP;
 - seis capturas de verificación de las herramientas en MCP Inspector;
-- este informe parcial.
+- `a_mano/a_mano.pdf` con la resolución manuscrita de la Parte 5;
+- este informe final.
 
 El costo acumulado de las dos corridas de agentes y sus evaluaciones es
 **USD 0.04449748**. La Parte 1 no usó juez y no generó costo de OpenRouter.
-Antes de la entrega falta contrastar este total con el dashboard de actividad,
-y completar la Parte 5.
+El total se obtiene de los costos reportados por el proveedor en
+`respuestas.log.md` y `respuestas_mcp.log.md`. El dashboard de actividad de
+OpenRouter no forma parte del repositorio ni está disponible en este entorno,
+por lo que la verificación visual final contra ese dashboard debe hacerse desde
+la cuenta del grupo; no se inventa una cifra adicional.
+
+Con los artefactos versionados, las pruebas en verde y la resolución manuscrita
+incorporada, no quedan tareas técnicas pendientes en el repositorio.

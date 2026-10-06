@@ -3,7 +3,7 @@
 Entrega: **viernes 9 de octubre de 2026**. Consigna completa en [`mission.md`](mission.md),
 contratos técnicos en [`SPEC.md`](SPEC.md), convenciones en [`CLAUDE.md`](CLAUDE.md).
 
-Estado a **2026-09-30**.
+Estado a **2026-10-06**.
 
 ## Estado general
 
@@ -119,3 +119,10 @@ comparación de la parte 3 mida el transporte y no otra cosa.
 | Tunear contra `dev` y caer en test | mantener el barrido chico y preferir configs simples que ganen por margen, no por décimas |
 | Costo del juez de OpenRouter | correr el evaluador solo ante un cambio que valga la pena medir; registrar el costo por corrida en los logs |
 | `bge_m3` muy lento en CPU | es opcional; con 3 encoders alcanza para la consigna |
+
+## Cierre — 2026-10-06
+
+La Parte 5 ya está resuelta y escaneada en `a_mano/a_mano.pdf`. El informe fue
+actualizado a estado final y no quedan tareas técnicas pendientes en el
+repositorio. El único control externo restante es contrastar los costos de los
+logs con el dashboard privado de OpenRouter desde la cuenta del grupo.
